@@ -1,0 +1,140 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background1"
+    android:keepScreenOn="true"
+    android:paddingBottom="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    tools:context="com.Bgilca.bgilca.Headlight" >
+
+    <Button
+        android:id="@+id/scaunstg"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/scaunstg"
+        android:baselineAlignBottom="true"
+        android:clickable="true" />
+
+    <Button
+        android:id="@+id/scaundr"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/scaundr"
+        android:baselineAlignBottom="true"
+        android:clickable="true" />
+
+    <Button
+        android:id="@+id/home"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/corrado_home"
+        android:clickable="true" />
+
+    <Button
+        android:id="@+id/head"
+        android:layout_width="40dp"
+        android:layout_height="53dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/head_tab"
+        android:clickable="true" />
+
+    <Button
+        android:id="@+id/navi"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_toLeftOf="@+id/head"
+        android:background="@drawable/navi_tab"
+        android:clickable="true" />
+
+    <Button
+        android:id="@+id/fantab"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_toLeftOf="@+id/navi"
+        android:background="@drawable/fan_tab"
+        android:clickable="true" />
+
+    <Button
+        android:id="@+id/faruri"
+        android:layout_width="230dp"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="360dp"
+        android:layout_marginLeft="90dp"
+        android:background="@drawable/faruri"
+        android:baselineAlignBottom="true"
+        android:clickable="true" />
+
+    <Button
+        android:id="@+id/ceata"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="360dp"
+        android:background="@drawable/cetzau"
+        android:baselineAlignBottom="true"
+        android:clickable="true" />
+
+    <ImageView
+        android:id="@+id/car"
+        android:layout_width="230dp"
+        android:layout_height="330dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="80dp"
+        android:background="@drawable/corradofar" >
+    </ImageView>
+
+    <Button
+        android:id="@+id/tails"
+        android:layout_width="230dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/tails"
+        android:baselineAlignBottom="true"
+        android:clickable="false" />
+
+    <Button
+        android:id="@+id/defog"
+        android:layout_width="160dp"
+        android:layout_height="87dp"
+        android:layout_alignBottom="@+id/car"
+        android:layout_alignLeft="@+id/car"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="59dp"
+        android:layout_marginLeft="36dp"
+        android:background="@drawable/defog"
+        android:clickable="true" />
+
+    <Button
+        android:id="@+id/spoiler"
+        android:layout_width="230dp"
+        android:layout_height="70dp"
+        android:layout_alignBottom="@+id/car"
+        android:layout_alignLeft="@+id/car"
+        android:background="@drawable/spoiler"
+        android:clickable="true" />
+
+</RelativeLayout>
