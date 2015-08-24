@@ -9,13 +9,18 @@ import com.example.bgilca.MusicService.MusicBinder;
 import android.widget.MediaController.MediaPlayerControl;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -29,6 +34,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 
@@ -52,14 +58,14 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	ProgressBar prog;
 	Counter progress;
 	Button shuffle;
-
+	G g ;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+		g = new G(this);
 		setContentView(R.layout.activity_main);
 		// if (savedInstanceState == null) {
 		// getFragmentManager().beginTransaction()
@@ -67,7 +73,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		prog = (ProgressBar) findViewById(R.id.progressBar);
 		// Counter progress = new Counter(prog, musicSrv);
 		// progress.start();
-
+		
 		songView = (ListView) findViewById(R.id.song_list);
 		songList = new ArrayList<Song>();
 		getSongList();
@@ -103,7 +109,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 				Intent vent = new Intent(MainActivity.this, Ventscreen.class);
 				startActivity(vent);
 				if (progress.isAlive())
-					progress.interrupt();
+					//progress.interrupt();
 				finish();
 			}
 		});
@@ -117,7 +123,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 				Intent nav = new Intent(MainActivity.this, Navi.class);
 				startActivity(nav);
 				if (progress.isAlive())
-					progress.interrupt();
+					//progress.interrupt();
 				finish();
 			}
 		});
@@ -131,14 +137,21 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 				Intent head = new Intent(MainActivity.this, Headlight.class);
 				startActivity(head);
 				if (progress.isAlive())
-					progress.interrupt();
+				//	progress.interrupt();
 				finish();
 			}
 		});
 
 		scaunstg = (Button) findViewById(R.id.scaunstg);
-		if (Storage.getScaunstg() == true) {
-			scaunstg.setPressed(true);
+		scaunstg.setPressed(g.getScaunstg());
+		if (g.getScaunstg() == true) {
+			g.setScaunstg(true);
+			MyService.mConnectedThread.write("1");
+			Log.i(G.TAG, "left seat active");
+		} else {
+			g.setScaunstg(false);
+			MyService.mConnectedThread.write("2");
+			Log.i(G.TAG, "left seat inactive");
 		}
 		scaunstg.setOnTouchListener(new OnTouchListener() {
 			@SuppressLint("ClickableViewAccessibility")
@@ -152,21 +165,29 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 				if (event.getAction() != MotionEvent.ACTION_UP)
 					return false;
 				// doSomething();
-
 				scaunstg.setPressed(!scaunstg.isPressed());
 				if (scaunstg.isPressed()) {
-					Storage.setScaunstg(true);
+					g.setScaunstg(true);
 					MyService.mConnectedThread.write("1");
+					Log.i(G.TAG, "left seat active");
 				} else {
-					Storage.setScaunstg(false);
+					g.setScaunstg(false);
 					MyService.mConnectedThread.write("2");
+					Log.i(G.TAG, "left seat inactive");
 				}
 				return true;
 			}
 		});
 		scaundr = (Button) findViewById(R.id.scaundr);
-		if (Storage.getScaundr() == true) {
-			scaundr.setPressed(true);
+		scaundr.setPressed(g.getScaundr());
+		if (g.getScaundr() == true) {
+			g.setScaundr(true);
+			MyService.mConnectedThread.write("3");
+			Log.i(G.TAG, "right seat active");
+		} else {
+			g.setScaundr(false);
+			MyService.mConnectedThread.write("4");
+			Log.i(G.TAG, "right seat inactive");
 		}
 		scaundr.setOnTouchListener(new OnTouchListener() {
 			@SuppressLint("ClickableViewAccessibility")
@@ -182,20 +203,22 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 				// doSomething();
 				scaundr.setPressed(!scaundr.isPressed());
 				if (scaundr.isPressed()) {
-					Storage.setScaundr(true);
+					g.setScaundr(true);
 					MyService.mConnectedThread.write("3");
+					Log.i(G.TAG, "right seat active");
 				} else {
-					Storage.setScaundr(false);
+					g.setScaundr(false);
 					MyService.mConnectedThread.write("4");
+					Log.i(G.TAG, "right seat inactive");
 				}
 				return true;
 			}
 		});
 
 		shuffle = (Button) findViewById(R.id.shuffle);
-		if (Storage.shuffle == true) {
-			shuffle.setPressed(true);
-		}
+		
+			shuffle.setPressed(g.getShuffle());
+		
 		shuffle.setOnTouchListener(new OnTouchListener() {
 			@SuppressLint("ClickableViewAccessibility")
 			@Override
@@ -209,10 +232,10 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 					return false;
 				// doSomething();
 				shuffle.setPressed(!shuffle.isPressed());
-				if (scaundr.isPressed()) {
-					Storage.shuffle = true;
+				if (shuffle.isPressed()) {
+					g.setShuffle(true);
 				} else {
-					Storage.shuffle = false;
+					g.setShuffle(false);
 				}
 				return true;
 			}
@@ -244,7 +267,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		play = (Button) findViewById(R.id.play);
 
-		play.setPressed(Storage.play);
+		play.setPressed(g.getPlay());
 
 		play.setOnTouchListener(new OnTouchListener() {
 
@@ -274,7 +297,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 				} else {
 					pause();
-					Storage.play = false;
+					g.editor.putBoolean(g.playic, false);
 				}
 				return true;
 			}
@@ -369,13 +392,19 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	}
 
 	public void onDestroy() {
+		
+		
 		stopService(new Intent(this, MyService.class));
 		stopService(playIntent);
 		musicSrv = null;
 
-		super.onDestroy();
+	        
 
-	}
+	            
+
+	             super.onDestroy();
+	    }
+	
 
 	@Override
 	public boolean canPause() {
@@ -465,17 +494,37 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		// Title.setText(Storage.title);
 
 	}
-
+	
 	@Override
 	public void onResume() {
 		super.onResume();
+		
+		
 	}
+	
+	
+
 }
 
 /**
  * A placeholder fragment containing a simple view.
  */
 /*
+ * private boolean isMyServiceRunning() {
+    ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+    for (RunningServiceInfo service : manager
+            .getRunningServices(Integer.MAX_VALUE)) {
+        if (LogoTimerService.class.getName().equals(
+                service.service.getClassName())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
+
  * public static class PlaceholderFragment extends ListFragment {
  * 
  * private static final String[] FROM = { MediaStore.Audio.Media.TITLE };

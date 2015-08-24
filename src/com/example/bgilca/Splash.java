@@ -23,13 +23,14 @@ public class Splash extends Activity {
 
 		setContentView(R.layout.activity_splash);
 		// Launch music
-		startService(new Intent(getBaseContext(), MyService.class));
+		
 
 		Thread launchTime = new Thread() {
 			public void run() {
 				try {
 
 					sleep(5000);
+					startService(new Intent(getBaseContext(), MyService.class));
 					Intent splashIntent = new Intent(
 							"com.example.bgilca.MainActivity");
 					startActivity(splashIntent);
@@ -51,9 +52,10 @@ public class Splash extends Activity {
 	}
 
 	protected void onPause() {
-		finish();
+
 
 		super.onPause();
+		finish();
 
 	}
 };

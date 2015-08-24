@@ -1,17 +1,21 @@
 package com.example.bgilca;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
 
 @SuppressLint("ClickableViewAccessibility")
-public class Ventscreen extends Headlight {
+public class Ventscreen extends Activity {
 	static Button scaunstg;
 	static Button scaundr;
 	Button navi;
@@ -21,37 +25,18 @@ public class Ventscreen extends Headlight {
 	// Button fan1 , fan2 , fan3 , fan4 ;
 	Button cap, corp, craci;
 	int fanspeed, tempsetup;
-
+	G g;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_ventscreen);
-
+		g = new G(this);
 		ImageView image = (ImageView) findViewById(R.id.fanspeed);
 		image.setImageResource(R.drawable.off);
-		if (Storage.getFanspeed() == 0) {
-			fanspeed = 0;
-		} else {
-			if (Storage.getFanspeed() == 1) {
-				fanspeed = 1;
-			} else {
-				if (Storage.getFanspeed() == 2) {
-					fanspeed = 2;
-				} else {
-					if (Storage.getFanspeed() == 3) {
-						fanspeed = 3;
-					}
-
-					else {
-						if (Storage.getFanspeed() == 4) {
-							fanspeed = 4;
-						}
-					}
-				}
-
-			}
-		}
+		fanspeed = g.getFanspeed();
 		if (fanspeed == 0) {
 			MyService.mConnectedThread.write("d");
 			ImageView image1 = (ImageView) findViewById(R.id.fanspeed);
@@ -88,7 +73,7 @@ public class Ventscreen extends Headlight {
 			}
 
 		}
-		tempsetup = Storage.tempsetup;
+		tempsetup = G.tempsetup;
 		if (tempsetup == 0) {
 			MyService.mConnectedThread.write("d");
 			ImageView image1 = (ImageView) findViewById(R.id.degwan);
@@ -203,7 +188,7 @@ public class Ventscreen extends Headlight {
 		}
 
 		cap = (Button) findViewById(R.id.cap);
-		if (Storage.getCap() == true) {
+		if (g.getCap() == true) {
 			cap.setPressed(true);
 		}
 		cap.setOnTouchListener(new OnTouchListener() {
@@ -226,18 +211,18 @@ public class Ventscreen extends Headlight {
 				// if(cap.isPressed())
 				// {fan1.setPressed(true);}
 				if (cap.isPressed()) {
-					Storage.setCap(true);
+					g.setCap(true);
 					MyService.mConnectedThread.write("i");
 
 				} else {
-					Storage.setCap(false);
+					g.setCap(false);
 				}
 				return true;
 			}
 		});
 
 		corp = (Button) findViewById(R.id.corp);
-		if (Storage.getCorp() == true) {
+		if (g.getCorp() == true) {
 			corp.setPressed(true);
 		}
 		corp.setOnTouchListener(new OnTouchListener() {
@@ -255,7 +240,7 @@ public class Ventscreen extends Headlight {
 				// if(corp.isPressed())
 				// {fan1.setPressed(true);}
 				if (corp.isPressed()) {
-					Storage.setCorp(true);
+					g.setCorp(true);
 					if (craci.isPressed()) {
 						MyService.mConnectedThread.write("l");
 						cap.setPressed(false);
@@ -265,7 +250,7 @@ public class Ventscreen extends Headlight {
 					}
 
 				} else {
-					Storage.setCorp(false);
+					g.setCorp(false);
 					if (craci.isPressed()) {
 						MyService.mConnectedThread.write("j");
 					}
@@ -274,7 +259,7 @@ public class Ventscreen extends Headlight {
 			}
 		});
 		craci = (Button) findViewById(R.id.craci);
-		if (Storage.getPicioare() == true) {
+		if (g.getPicioare() == true) {
 			craci.setPressed(true);
 		}
 		craci.setOnTouchListener(new OnTouchListener() {
@@ -293,7 +278,7 @@ public class Ventscreen extends Headlight {
 				// {fan1.setPressed(true);
 				// }
 				if (craci.isPressed()) {
-					Storage.setPicioare(true);
+					g.setPicioare(true);
 					if (corp.isPressed()) {
 
 						MyService.mConnectedThread.write("l");
@@ -303,7 +288,7 @@ public class Ventscreen extends Headlight {
 						cap.setPressed(false);
 					}
 				} else {
-					Storage.setPicioare(false);
+					g.setPicioare(false);
 					if (corp.isPressed()) {
 						MyService.mConnectedThread.write("k");
 					}
@@ -393,7 +378,7 @@ public class Ventscreen extends Headlight {
 					return false;
 				if (tempsetup < 11) {
 					tempsetup++;
-					Storage.tempsetup = tempsetup;
+					G.tempsetup = tempsetup;
 				}
 
 				if (tempsetup == 0) {
@@ -535,7 +520,7 @@ public class Ventscreen extends Headlight {
 					return false;
 				if (tempsetup > 0) {
 					tempsetup--;
-					Storage.tempsetup = tempsetup;
+					G.tempsetup = tempsetup;
 				}
 
 				if (tempsetup == 0) {
@@ -684,33 +669,33 @@ public class Ventscreen extends Headlight {
 					MyService.mConnectedThread.write("d");
 					ImageView image = (ImageView) findViewById(R.id.fanspeed);
 					image.setImageResource(R.drawable.off);
-					Storage.setFanspeed(0);
+					g.setFanspeed(0);
 
 				} else {
 					if (fanspeed == 1) {
 						MyService.mConnectedThread.write("e");
 						ImageView image = (ImageView) findViewById(R.id.fanspeed);
 						image.setImageResource(R.drawable.fan1);
-						Storage.setFanspeed(1);
+						g.setFanspeed(1);
 					} else {
 						if (fanspeed == 2) {
 							MyService.mConnectedThread.write("f");
 
 							ImageView image = (ImageView) findViewById(R.id.fanspeed);
 							image.setImageResource(R.drawable.fan2);
-							Storage.setFanspeed(2);
+							g.setFanspeed(2);
 						} else {
 							if (fanspeed == 3) {
 								MyService.mConnectedThread.write("g");
 								ImageView image = (ImageView) findViewById(R.id.fanspeed);
 								image.setImageResource(R.drawable.fan3);
-								Storage.setFanspeed(3);
+								g.setFanspeed(3);
 							} else {
 								if (fanspeed == 4) {
 									MyService.mConnectedThread.write("h");
 									ImageView image = (ImageView) findViewById(R.id.fanspeed);
 									image.setImageResource(R.drawable.fan4);
-									Storage.setFanspeed(4);
+									g.setFanspeed(4);
 								}
 							}
 						}
@@ -742,33 +727,33 @@ public class Ventscreen extends Headlight {
 					MyService.mConnectedThread.write("d");
 					ImageView image = (ImageView) findViewById(R.id.fanspeed);
 					image.setImageResource(R.drawable.off);
-					Storage.setFanspeed(0);
+					g.setFanspeed(0);
 
 				} else {
 					if (fanspeed == 1) {
 						MyService.mConnectedThread.write("e");
 						ImageView image = (ImageView) findViewById(R.id.fanspeed);
 						image.setImageResource(R.drawable.fan1);
-						Storage.setFanspeed(1);
+						g.setFanspeed(1);
 					} else {
 						if (fanspeed == 2) {
 							MyService.mConnectedThread.write("f");
 
 							ImageView image = (ImageView) findViewById(R.id.fanspeed);
 							image.setImageResource(R.drawable.fan2);
-							Storage.setFanspeed(2);
+							g.setFanspeed(2);
 						} else {
 							if (fanspeed == 3) {
 								MyService.mConnectedThread.write("g");
 								ImageView image = (ImageView) findViewById(R.id.fanspeed);
 								image.setImageResource(R.drawable.fan3);
-								Storage.setFanspeed(3);
+								g.setFanspeed(3);
 							} else {
 								if (fanspeed == 4) {
 									MyService.mConnectedThread.write("h");
 									ImageView image = (ImageView) findViewById(R.id.fanspeed);
 									image.setImageResource(R.drawable.fan4);
-									Storage.setFanspeed(4);
+									g.setFanspeed(4);
 								}
 							}
 						}
@@ -781,10 +766,18 @@ public class Ventscreen extends Headlight {
 		});
 
 		scaunstg = (Button) findViewById(R.id.scaunstg);
-		if (Storage.getScaunstg() == true) {
-			scaunstg.setPressed(true);
+		scaunstg.setPressed(g.getScaunstg());
+		if (g.getScaunstg() == true) {
+			g.setScaunstg(true);
+			MyService.mConnectedThread.write("1");
+			Log.i(G.TAG, "left seat active");
+		} else {
+			g.setScaunstg(false);
+			MyService.mConnectedThread.write("2");
+			Log.i(G.TAG, "left seat inactive");
 		}
 		scaunstg.setOnTouchListener(new OnTouchListener() {
+			@SuppressLint("ClickableViewAccessibility")
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// show interest in events resulting from ACTION_DOWN
@@ -794,19 +787,56 @@ public class Ventscreen extends Headlight {
 				// only runs once.
 				if (event.getAction() != MotionEvent.ACTION_UP)
 					return false;
-
+				// doSomething();
 				scaunstg.setPressed(!scaunstg.isPressed());
 				if (scaunstg.isPressed()) {
-					Storage.setScaunstg(true);
+					g.setScaunstg(true);
 					MyService.mConnectedThread.write("1");
+					Log.i(G.TAG, "left seat active");
 				} else {
-					Storage.setScaunstg(false);
+					g.setScaunstg(false);
 					MyService.mConnectedThread.write("2");
+					Log.i(G.TAG, "left seat inactive");
 				}
 				return true;
 			}
 		});
-
+		scaundr = (Button) findViewById(R.id.scaundr);
+		scaundr.setPressed(g.getScaundr());
+		if (g.getScaundr() == true) {
+			g.setScaundr(true);
+			MyService.mConnectedThread.write("3");
+			Log.i(G.TAG, "right seat active");
+		} else {
+			g.setScaundr(false);
+			MyService.mConnectedThread.write("4");
+			Log.i(G.TAG, "right seat inactive");
+		}
+		scaundr.setOnTouchListener(new OnTouchListener() {
+			@SuppressLint("ClickableViewAccessibility")
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// show interest in events resulting from ACTION_DOWN
+				if (event.getAction() == MotionEvent.ACTION_DOWN)
+					return true;
+				// don't handle event unless its ACTION_UP so "doSomething()"
+				// only runs once.
+				if (event.getAction() != MotionEvent.ACTION_UP)
+					return false;
+				// doSomething();
+				scaundr.setPressed(!scaundr.isPressed());
+				if (scaundr.isPressed()) {
+					g.setScaundr(true);
+					MyService.mConnectedThread.write("3");
+					Log.i(G.TAG, "right seat active");
+				} else {
+					g.setScaundr(false);
+					MyService.mConnectedThread.write("4");
+					Log.i(G.TAG, "right seat inactive");
+				}
+				return true;
+			}
+		});
 		navi = (Button) findViewById(R.id.navi);
 		navi.setOnClickListener(new OnClickListener() {
 			@Override
@@ -830,32 +860,7 @@ public class Ventscreen extends Headlight {
 				finish();
 			}
 		});
-		scaundr = (Button) findViewById(R.id.scaundr);
-		if (Storage.getScaundr() == true) {
-			scaundr.setPressed(true);
-		}
-		scaundr.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// show interest in events resulting from ACTION_DOWN
-				if (event.getAction() == MotionEvent.ACTION_DOWN)
-					return true;
-				// don't handle event unless its ACTION_UP so "doSomething()"
-				// only runs once.
-				if (event.getAction() != MotionEvent.ACTION_UP)
-					return false;
-				// doSomething();
-				scaundr.setPressed(!scaundr.isPressed());
-				if (scaundr.isPressed()) {
-					Storage.setScaundr(true);
-					MyService.mConnectedThread.write("3");
-				} else {
-					Storage.setScaundr(false);
-					MyService.mConnectedThread.write("4");
-				}
-				return true;
-			}
-		});
+		
 		home = (Button) findViewById(R.id.home);
 		home.setOnClickListener(new OnClickListener() {
 			@Override

@@ -13,7 +13,7 @@ class Counter extends Thread {
 	TextView TotalDur, CurrentPos;
 	TextView title;
 	Handler handler = new Handler();
-
+	G g;
 	public Counter(ProgressBar progres, MusicService musicSrv, TextView Title,
 			TextView CurrentPos, TextView TotalDur) {
 		this.progres = progres;
@@ -43,7 +43,7 @@ class Counter extends Thread {
 						Currentsec = Current % 60;
 						handler.post(new Runnable() {
 							public void run() {
-								title.setText(Storage.title);
+								title.setText(G.title);
 								if (Currentsec < 10)
 									CurrentPos.setText(Currentmin + " : 0"
 											+ Currentsec);
@@ -60,7 +60,7 @@ class Counter extends Thread {
 						});
 						musicSrv.getTit();
 						if (musicSrv.getPosn() > musicSrv.getDur() - 100)
-							if (Storage.shuffle == true)
+							if (g.getShuffle() == true)
 								musicSrv.playNextsh();
 							else {
 								musicSrv.playNext();

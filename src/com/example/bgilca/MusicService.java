@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -15,7 +17,7 @@ import android.util.Log;
 
 public class MusicService extends Service implements
 		MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-		MediaPlayer.OnCompletionListener {
+		MediaPlayer.OnCompletionListener, ServiceConnection {
 	public int dur;
 	protected boolean stopper = true;
 	private MediaPlayer player;
@@ -50,7 +52,7 @@ public class MusicService extends Service implements
 
 	public void getTit() {
 		Song titlu = songs.get(songPosn);
-		Storage.title = titlu.getTitle();
+		G.title = titlu.getTitle();
 	}
 
 	public void setList(ArrayList<Song> theSongs) {
@@ -185,6 +187,18 @@ public class MusicService extends Service implements
 		songPosn = randomGenerator.nextInt(songs.size());
 		playSong(); // TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onServiceConnected(ComponentName name, IBinder service) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onServiceDisconnected(ComponentName name) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
